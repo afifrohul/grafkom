@@ -1,4 +1,4 @@
-import sys
+
 from math import *
 
 from OpenGL.GL import *
@@ -53,3 +53,4 @@ def gabung(x,y):
     lingkaran_f(x, y)
     lingkaran_g(x, y)
     lingkaran_h(x, y)
+
