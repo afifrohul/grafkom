@@ -1,5 +1,6 @@
 import os.path
 import random
+import time
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -13,17 +14,32 @@ gerakBawah=True
 gerakKiri=True
 gerakKanan=True
 
+# gerakAtas=False
+# gerakBawah=False
+# gerakKiri=False
+# gerakKanan=False
 
-food_X = random.randint(-200, 200)
-food_Y = random.randint(-200, 200)
+food_X = random.randint(-300, 300)
+food_Y = random.randint(-300, 300)
 
-pois_X = random.randint(-200, 200)
-pois_Y = random.randint(-200, 200)
+food_2min_X = random.randint(-300, 300)
+food_2min_Y = random.randint(-300, 300)
+
+food_3min_X = random.randint(-300, 300)
+food_3min_Y = random.randint(-300, 300)
+
+sfood_X = random.randint(-300, 300)
+sfood_Y = random.randint(-300, 300)
+
+pois_X = random.randint(-300, 300)
+pois_Y = random.randint(-300, 300)
 
 state = 'start'
 food = None
-pois = None
-n_pois = 1
+food_2min = None
+food_3min = None
+sfood = None
+pois = None 
 score = 0 
 if (os.path.isfile("high_score.txt")):
         scoreFile = open("high_score.txt")
@@ -38,32 +54,32 @@ def boundaries():
     glColor3ub(255,0,0)
     glVertex2f(-400,400) #a
     glVertex2f(-400,-400) #b
-    glVertex2f(-350,-400) #c
-    glVertex2f(-350,400) #f
+    glVertex2f(-320,-400) #c
+    glVertex2f(-320,400) #f
     glEnd()
 
     glBegin(GL_QUADS)
     glColor3ub(255,0,0)
     glVertex2f(-400, 400)
     glVertex2f(400, 400)
-    glVertex2f(400, 350)
-    glVertex2f(-400, 350)
+    glVertex2f(400, 330)
+    glVertex2f(-400, 330)
     glEnd()
 
     glBegin(GL_QUADS)
     glColor3ub(255,0,0)
-    glVertex2f(350, 400)
+    glVertex2f(320, 400)
     glVertex2f(400, 400)
     glVertex2f(400, -400)
-    glVertex2f(350, -400)
+    glVertex2f(320, -400)
     glEnd()
 
     glBegin(GL_QUADS)
     glColor3ub(255,0,0)
-    glVertex2f(400, -350)
+    glVertex2f(400, -330)
     glVertex2f(400, -400)
     glVertex2f(-400, -400)
-    glVertex2f(-400, -350)
+    glVertex2f(-400, -330)
     glEnd()
 
 def snake():
@@ -173,7 +189,7 @@ def makanan(x,y):
     glPopMatrix()
 
 def new_food(food):
-    global snake_pos, score, food_X, food_Y, pois_X, pois_Y, n_pois
+    global snake_pos, score, food_X, food_Y, sfood_X, sfood_Y, pois_X, pois_Y, food_2min_X, food_2min_Y, food_3min_X, food_3min_Y
     if food != None:
         food = None
 
@@ -181,18 +197,140 @@ def new_food(food):
     if snake_pos[0] in range(int(food_X)-20, int(food_X)+20) and snake_pos[1] in range(int(food_Y)-20, int(food_Y)+20):
         score += 1
     
-        food_X = random.randint(-200, 200)
-        food_Y = random.randint(-200, 200)
+        food_X = random.randint(-300, 300)
+        food_Y = random.randint(-300, 300)
         new_food(food)
-        # if score % 5 == 0:
-        #     n_pois += 1
-        # print(n_pois)
-        pois_X = random.randint(-200, 200)
-        pois_Y = random.randint(-200, 200)
+        food_2min_X = random.randint(-300, 300)
+        food_2min_Y = random.randint(-300, 300)
+        new_2min_food(food_2min)
+        food_3min_X = random.randint(-300, 300)
+        food_3min_Y = random.randint(-300, 300)
+        new_3min_food(food_3min)
+        sfood_X = random.randint(-300, 300)
+        sfood_Y = random.randint(-300, 300)
+        new_special_food(sfood)
+        pois_X = random.randint(-300, 300)
+        pois_Y = random.randint(-300, 300)
         new_poison(pois)
 
+def makanan_2min(x,y):
+    glPushMatrix()
+    glTranslated(x, y, 0)
+    glBegin(GL_QUADS)
+    glColor3ub(0,0,255)
+    glVertex2f(-5, 5)
+    glVertex2f(5, 5)
+    glVertex2f(5, -5)
+    glVertex2f(-5, -5)
+    glEnd()
+    glPopMatrix()
+
+def new_2min_food(food_2min):
+    global snake_pos, score, food_X, food_Y, sfood_X, sfood_Y, pois_X, pois_Y, food_2min_X, food_2min_Y, food_3min_X, food_3min_Y
+    if food_2min != None:
+        food_2min = None
+
+    food_2min = makanan_2min(food_2min_X, food_2min_Y)
+    if snake_pos[0] in range(int(food_2min_X)-20, int(food_2min_X)+20) and snake_pos[1] in range(int(food_2min_Y)-20, int(food_2min_Y)+20):
+        score -= 2
+    
+        food_X = random.randint(-300, 300)
+        food_Y = random.randint(-300, 300)
+        new_food(food)
+        food_2min_X = random.randint(-300, 300)
+        food_2min_Y = random.randint(-300, 300)
+        new_2min_food(food_2min)
+        sfood_X = random.randint(-300, 300)
+        sfood_Y = random.randint(-300, 300)
+        new_special_food(sfood)
+        pois_X = random.randint(-300, 300)
+        pois_Y = random.randint(-300, 300)
+        new_poison(pois)
+
+def makanan_3min(x,y):
+    glPushMatrix()
+    glTranslated(x, y, 0)
+    glBegin(GL_QUADS)
+    glColor3ub(0,255,255)
+    glVertex2f(-5, 5)
+    glVertex2f(5, 5)
+    glVertex2f(5, -5)
+    glVertex2f(-5, -5)
+    glEnd()
+    glPopMatrix()
+
+def new_3min_food(food_3min):
+    global snake_pos, score, food_X, food_Y, sfood_X, sfood_Y, pois_X, pois_Y, food_2min_X, food_2min_Y, food_3min_X, food_3min_Y
+    if food_3min != None:
+        food_3min = None
+
+    food_3min = makanan_3min(food_3min_X, food_3min_Y)
+    if snake_pos[0] in range(int(food_3min_X)-20, int(food_3min_X)+20) and snake_pos[1] in range(int(food_3min_Y)-20, int(food_3min_Y)+20):
+        score -= 3
+
+        food_X = random.randint(-300, 300)
+        food_Y = random.randint(-300, 300)
+        new_food(food)
+        food_2min_X = random.randint(-300, 300)
+        food_2min_Y = random.randint(-300, 300)
+        new_2min_food(food_2min)
+        food_3min_X = random.randint(-300, 300)
+        food_3min_Y = random.randint(-300, 300)
+        new_3min_food(food_3min)
+        sfood_X = random.randint(-300, 300)
+        sfood_Y = random.randint(-300, 300)
+        new_special_food(sfood)
+        pois_X = random.randint(-300, 300)
+        pois_Y = random.randint(-300, 300)
+        new_poison(pois)
+
+def makanan_special(x,y):
+    glPushMatrix()
+    glTranslated(x, y, 0)
+    glBegin(GL_QUADS)
+    glColor3ub(255,255,0)
+    glVertex2f(-10, 10)
+    glVertex2f(10, 10)
+    glVertex2f(10, -10)
+    glVertex2f(-10, -10)
+    glEnd()
+    glPopMatrix()
+
+def new_special_food(sfood):
+    global snake_pos, score, food_X, food_Y, sfood_X, sfood_Y, pois_X, pois_Y,food_2min_X, food_2min_Y, food_3min_X, food_3min_Y
+
+    if sfood != None:
+        sfood = None
+
+    if score > 0 :
+        sfood = makanan_special(sfood_X, sfood_Y)
+        
+        if snake_pos[0] in range(int(sfood_X)-20, int(sfood_X)+20) and snake_pos[1] in range(int(sfood_Y)-20, int(sfood_Y)+20):
+            score += 3
+        
+            food_X = random.randint(-300, 300)
+            food_Y = random.randint(-300, 300)
+            new_food(food)
+            food_2min_X = random.randint(-300, 300)
+            food_2min_Y = random.randint(-300, 300)
+            new_2min_food(food_2min)
+            food_3min_X = random.randint(-300, 300)
+            food_3min_Y = random.randint(-300, 300)
+            new_3min_food(food_3min)
+            sfood_X = random.randint(-300, 300)
+            sfood_Y = random.randint(-300, 300)
+            new_special_food(sfood)
+            pois_X = random.randint(-300, 300)
+            pois_Y = random.randint(-300, 200)
+            new_poison(pois)
+        
+        # if snake_pos[0] not in range(int(sfood_X)-20, int(sfood_X)+20) and snake_pos[1] not in range(int(sfood_Y)-20, int(sfood_Y)+20):
+        #     time.sleep(3)
+        #     sfood_X = random.randint(-300,900)
+        #     sfood_Y = random.randint(-300,900)
+
 def racun(x,y):
-    global n_pois
+    global snake_pos, score, food_X, food_Y, sfood_X, sfood_Y, pois_X, pois_Y,food_2min_X, food_2min_Y, food_3min_X, food_3min_Y
     glPushMatrix()
     glTranslated(x, y, 0)
     glBegin(GL_QUADS)
@@ -251,6 +389,12 @@ def showScreen():
         snake()
         new_food(food)
         new_poison(pois)
+        if score > 4 :
+            new_2min_food(food_2min)
+        if score > 10 :
+            new_3min_food(food_3min)
+        if score % 7 == 0:
+            new_special_food(sfood)
         drawText('score '+ str(score), -200, -425, 255, 255, 255,)
         drawText('high score '+ str(high_score), 100, -425, 255, 255, 255,)
         game_over(400, -400, -400, -310)
@@ -285,6 +429,7 @@ def controller(key,x,y):
         if gerakKiri==False:
             gerakKiri=True
         snake_pos[0]+=speed
+
     
         
 # inisialisasi
